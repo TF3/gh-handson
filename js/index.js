@@ -63,6 +63,24 @@
 		},
 
 		'input[name="img"] change': function(context, $el) {
+			// 変数の定義
+			var $imgPreview = this.$find('.img-preview'); // 画像表示のDOM部分
+
+			// input要素からファイルを取得
+			var file = $el[0].files[0];
+
+			// FileReaderインスタンスの作成
+			var reader = new FileReader();
+
+			// ファイルが読み込まれた時の処理を記述
+			reader.onload = function(e) {
+				// 画像を表示（変数eの中にファイルの内容が入るので、imgタグのsrcに適用する）
+				$imgPreview.find('img').attr('src', e.target.result);
+				$imgPreview.show();
+			}
+
+			// ファイル読み込み開始
+			reader.readAsDataURL(file);
 		},
 
 		'.confirm click': function(context, $el) {
