@@ -84,7 +84,39 @@
 		},
 
 		'.confirm click': function(context, $el) {
+			// 初期化（イベント無効化）
+			context.event.preventDefault();
+
+			// パラメータの設定（フォームに入力されている値をハッシュ化して、ビューで表示する変数とする）
+			var params = {};
+			var ary = this.$find('form').serializeArray();
+			for (i in ary) {
+				params[ary[i].name] = ary[i].value;
+			}
+
+			// 複数行対応分のエスケープ処理（報告内容欄は複数行入力できますので、表示時に改行を <br /> にする）
+			// index.html内の<script>タグ内で改行を置き換えている
+			// TODO: セミコロンがなくても動く(hifiveのメソッドだから？)
+			params.comment = h5.u.str.escapeHtml(params.comment)
+
+			// ビューの設定
+			this.view.update('.modal-content', 'confirm', params);
+
+			// モーダル表示
+			this.$find('#confirmModal').modal();
 		},
+
+		'.register click': function(context, $el) {
+			// Ajaxの擬似実行
+			h5.ajax({
+				type: 'post',
+				data: this.$find('form').serialize(),
+				url: '/register',
+			}).then(this.own(function(){ // ownでthisを中に渡す
+				alert('登録しました');
+				this.$find('#confirmModal').modal('hide');
+			}))
+		}
 
 	};
 
